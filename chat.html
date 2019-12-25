@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <title>チャット</title>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+            integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+				<h1 class="col-sm-12">Ajax掲示板</h1>
+                <ul class="chat container"></ul>
+
+                <form
+                    id="chat_form"
+                    method="post"
+                    action="chat.php"
+                    class="col-sm-12 row"
+                >
+                    <input
+                        type="text"
+                        name="chat_name"
+                        class="chat_name col-sm-3"
+                        placeholder="名無しさん"
+                    />
+                    <textarea
+                        class="chat_content col-sm-12"
+                        name="message"
+                        placeholder="ご自由にご記入ください"
+                    ></textarea>
+                </form>
+
+                <button id="send_chat" class="col-sm-1">送信</button>
+                <div class="back_btn"><a href="index.html">戻る</a></div>
+
+                <p class="error col-sm-12"></p>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                read_chat(), send_chat();
+            });
+
+            function read_chat() {
+                var thread_id = getParam("thread_id");
+                $.ajax({
+                    url: "chat.php",
+                    type: "POST",
+                    data: {
+                        Thread_id: thread_id
+                    }
+                })
+                    // Ajaxリクエストが成功した時発動
+                    .done(function(data) {
+                        $(".chat").html(data);
+                    })
+                    // Ajaxリクエストが失敗した時発動
+                    .fail(function(data) {
+                        $(".thread").html(data);
+                        console.log(data);
+                    });
+            }
+
+            function send_chat() {
+                $("#send_chat").on("click", function() {
+                    var thread_id = getParam("thread_id");
+                    var chat_name = $(".chat_name").val();
+                    var chat_content = $(".chat_content").val();
+                    if (chat_name.length == 0) {
+                        chat_name = "名無しさん";
+                    }
+
+                    if (chat_content.length == 0) {
+                        $(".error").html("メッセージを入力してください");
+                    } else {
+                        $(".error").html("");
+                    }
+                    $.ajax({
+                        url: "chat.php",
+                        type: "POST",
+                        data: {
+                            Thread_id: thread_id,
+                            chat_name: chat_name,
+                            chat_content: chat_content
+                        }
+                    })
+                        // Ajaxリクエストが成功した時発動
+                        .done(function(data) {
+                            $(".chat").html(data);
+                        })
+                        // Ajaxリクエストが失敗した時発動
+                        .fail(function(data) {
+                            $(".test").html(data);
+                            console.log(data);
+                        });
+                });
+            }
+
+            function getParam(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return "";
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+        </script>
+    </body>
+</html>
