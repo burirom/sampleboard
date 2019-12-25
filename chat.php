@@ -7,9 +7,9 @@ $password = 'root';
 // 利用するデータベース
 $dbName = 'Bulletin_board';
 // MySQLサーバ
-$host = 'localhost:3306';
+$host = 'mysql';
 // MySQLのDSN文字列
-$dsn = "mysql:host=mysql;dbname={$dbName};charset=utf8";
+$dsn = "mysql:host={$mysql};dbname={$dbName};charset=utf8";
 
 
 $thread_id = $_POST['Thread_id'];
