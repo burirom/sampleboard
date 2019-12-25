@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Ajax掲示板</title>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+            integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+				<h1 class="col-sm-12">Ajax掲示板</h1>
+
+                <form id="thread_form" class="col-sm-12" method="post">
+                    <ul class="thread_name">
+						
+                    </ul>
+                </form>
+
+                <form id="thread_form" class="col-sm-12 col-lg-9" method="post">
+                    <input
+                        type="text"
+                        name="thread_name"
+                        id="thread_name"
+                        class="thread_form"
+                    />
+                </form>
+
+                <button id="creat_thread" class="col-sm-12 col-lg-3">
+                    スレッドを作成
+                </button>
+                
+                <p class="error col-sm-12"></p>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                creat_thread(), read_thread();
+            });
+
+            function creat_thread() {
+                // Ajax button click
+                $("#creat_thread").on("click", function() {
+                    var Thread_title = $("#thread_name").val();
+                    if (Thread_title.length == 0) {
+                        $(".error").html("スレッド名を入力してください");
+                    } else {
+                        $(".error").html("");
+                    }
+                    $.ajax({
+                        url: "thread.php",
+                        type: "POST",
+                        data: {
+                            Thread_title: Thread_title
+                        }
+                    })
+                        // Ajaxリクエストが成功した時発動
+                        .done(function(data) {
+                            $(".thread_name").html(data);
+                        })
+                        // Ajaxリクエストが失敗した時発動
+                        .fail(function(data) {
+                            $(".error").html("リクエストが失敗しました。");
+                            console.log(data);
+                        });
+                });
+            }
+
+            function read_thread() {
+                $.ajax({
+                    url: "thread.php",
+                    type: "POST"
+                })
+                    // Ajaxリクエストが成功した時発動
+                    .done(function(data) {
+                        $(".thread_name").html(data);
+                    })
+                    // Ajaxリクエストが失敗した時発動
+                    .fail(function(data) {
+                        $(".error").html("リクエストが失敗しました。");
+                        console.log(data);
+                    });
+            }
+        </script>
+    </body>
+</html>
